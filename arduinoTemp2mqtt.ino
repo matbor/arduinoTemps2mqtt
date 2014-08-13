@@ -3,13 +3,7 @@
 #include <Ethernet.h>
 #include <PubSubClient.h>
 
-// Based on the below, modified by Mathhew Bordignon @bordignons on twitter
-//
-// OneWire DS18S20, DS18B20, DS1822 Temperature Example
-// http://www.pjrc.com/teensy/td_libs_OneWire.html
-//
-// The DallasTemperature library can do all this work for you!
-// http://milesburton.com/Dallas_Temperature_Control_Library
+// by Matthew Bordignon @bordignons on twitter
 //
 // Modified to automatically publish to topic using the ROM ID with the celsius temperature.
 // Thx to help of Nick O'Leary @knolleary and also to Jarek Sinicki 
