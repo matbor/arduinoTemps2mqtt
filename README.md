@@ -25,15 +25,12 @@ Thanks for the Help,
 
 
 
-acknowledgements..
+*acknowledgements..*
 
-Initial topic issues;
-http://stackoverflow.com/questions/17480819/onewire-temperatures-to-mqtt-broker-server/17485978?noredirect=1#17485978
+[Initial topic issues](http://stackoverflow.com/questions/17480819/onewire-temperatures-to-mqtt-broker-server/17485978?noredirect=1#17485978)
 
-OneWire DS18S20, DS18B20, DS1822 Temperature Example
-http://www.pjrc.com/teensy/td_libs_OneWire.html
+[OneWire DS18S20, DS18B20, DS1822 Temperature Example](http://www.pjrc.com/teensy/td_libs_OneWire.html)
 
-The DallasTemperature library can do all this work for you!
-http://milesburton.com/Dallas_Temperature_Control_Library
+[The DallasTemperature library can do all this work for you!](http://milesburton.com/Dallas_Temperature_Control_Library)
 
 And Jarek Sinicki for the help with multiple onewire pins.
