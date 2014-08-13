@@ -2,22 +2,27 @@
 #include <OneWire.h>
 #include <Ethernet.h>
 #include <PubSubClient.h>
-// Based on the below, modified by www.bordignons.net
+
+// Based on the below, modified by Mathhew Bordignon @bordignons on twitter
 //
 // OneWire DS18S20, DS18B20, DS1822 Temperature Example
-//
 // http://www.pjrc.com/teensy/td_libs_OneWire.html
 //
 // The DallasTemperature library can do all this work for you!
 // http://milesburton.com/Dallas_Temperature_Control_Library
 //
-// Modified to automatically publish to topic using the ROM ID
-// also the celsius temp
-// Thx to help of knolleary @
-// http://stackoverflow.com/questions/17480819/onewire-temperatures-to-mqtt-broker-server/17485978?noredirect=1#17485978
+// Modified to automatically publish to topic using the ROM ID with the celsius temperature.
+// Thx to help of Nick O'Leary @knolleary and also to Jarek Sinicki 
 //
-OneWire  ds(3);  // on pin 3 (a 4.7K resistor is necessary)
+// OneWire  ds(3);  // on pin 3 (a 4.7K resistor is necessary)
 
+// Declare an array with pin numbers for individual OneWire buses
+OneWire  ds[] = {
+  3, 9};
+
+byte No_of_1Wire_Buses = sizeof(ds) / sizeof(ds[0]);  // Number of pins declared for OneWire = number of Buses
+byte this_1Wire_Bus = 0;  // OneWire Bus number that is currently processed
+  
 //Ethernet and pubsub setup BEGIN
 byte mac[]    = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };
 //byte server[] = { 10, 0, 8, 34 }; //Comment out if you want DHCP
@@ -50,7 +55,9 @@ void setup(void) {
     Serial.print("."); 
   }
   Serial.println();
-
+  delay(3000);
+  Serial.print("Number of defined 1Wiew buses: ");
+  Serial.println(No_of_1Wire_Buses);
 }
 
 void loop(void) {
@@ -58,8 +65,8 @@ void loop(void) {
   if (!client.connected())
   {
     Serial.println("Connecting to MQTT server");
-    client.connect("arduino-weather");
-    client.publish("/house/hardware/arduino/weather1/status","ONLINE");
+    client.connect("arduino_temperature");
+    client.publish("/lwt/arduino_temperature","ONLINE");
     //client.subscribe("/status/read");
     Serial.println("Connected to MQTT server");
   }
@@ -70,13 +77,19 @@ void loop(void) {
   byte data[12];
   byte addr[8];
   float celsius, fahrenheit;
-  
-  if ( !ds.search(addr)) {
-    Serial.println("No more addresses.");
-    Serial.println();
-    ds.reset_search();
+ 
+  if ( !ds[this_1Wire_Bus].search(addr)) {
+    Serial.print("No more addresses for array element number: ");
+    Serial.println(this_1Wire_Bus);
+    // If all buses done, start all over again
+    if (this_1Wire_Bus >= (No_of_1Wire_Buses - 1)) {
+      this_1Wire_Bus = 0;
+    } else {
+      this_1Wire_Bus++;
+    }
+    ds[this_1Wire_Bus].reset_search();
     Serial.println("Pausing between search's");
-    delay(60000); //delay between finding all the sensors
+    delay(30000); //delay between finding all the sensors
     return;
   }
   
@@ -111,22 +124,22 @@ void loop(void) {
       return;
   } 
 
-  ds.reset();
-  ds.select(addr);
-  ds.write(0x44, 1);        // start conversion, with parasite power on at the end
+  ds[this_1Wire_Bus].reset();
+  ds[this_1Wire_Bus].select(addr);
+  ds[this_1Wire_Bus].write(0x44, 1);        // start conversion, with parasite power on at the end
   
   delay(1000);     // maybe 750ms is enough, maybe not
   // we might do a ds.depower() here, but the reset will take care of it.
   
-  present = ds.reset();
-  ds.select(addr);    
-  ds.write(0xBE);         // Read Scratchpad
+  present = ds[this_1Wire_Bus].reset();
+  ds[this_1Wire_Bus].select(addr);    
+  ds[this_1Wire_Bus].write(0xBE);         // Read Scratchpad
 
   Serial.print("  Data = ");
   Serial.print(present, HEX);
   Serial.print(" ");
   for ( i = 0; i < 9; i++) {           // we need 9 bytes
-    data[i] = ds.read();
+    data[i] = ds[this_1Wire_Bus].read();
     Serial.print(data[i], HEX);
     Serial.print(" ");
   }
