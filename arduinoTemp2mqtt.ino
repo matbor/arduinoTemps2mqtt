@@ -19,7 +19,7 @@ byte this_1Wire_Bus = 0;  // OneWire Bus number that is currently processed
   
 //Ethernet and pubsub setup BEGIN
 byte mac[]    = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };
-//byte server[] = { 10, 0, 8, 34 }; //Comment out if you want DHCP
+//byte ip[] = { 10, 0, 8, 34 }; //Comment out if you want DHCP also you need to modify Ethernet.begin(mac, ip)
 
 void callback(char* topic, byte* payload, unsigned int length) {
   // handle message arrived
