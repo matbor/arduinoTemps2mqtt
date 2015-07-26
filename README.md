@@ -1,6 +1,8 @@
 arduinoTemps2mqtt
 =================
 
+ESP8266 version here; https://github.com/matbor/esp8266Temps2mqtt
+
 Arduino sketch, grab Onewire Temperature's and publish to a [mqtt](http://www.mqtt.org) broker.
 
 
